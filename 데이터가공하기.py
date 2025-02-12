@@ -1,4 +1,5 @@
 # 데이터 전처리 : 주어진 데이터를 분석에 적합하도록 가공하는 작업
+import numpy as np
 import pandas as pd
 from sympy import false
 
@@ -53,5 +54,23 @@ print(exam.sort_values(['nclass', 'math'],ascending=[True, False]))
 # 파생 변수 추가 하기
 print(exam.assign(total = exam['math'] + exam['english'] + exam['science']))
 
+# 파생 변수 추가 (원본 데이터 변형)
 exam['total'] = exam['math'] + exam['english'] + exam['science']
 print(exam)
+
+print(exam.assign(test = np.where(exam['science'] >= 60, 'pass', 'fail')))
+
+# 체이닝 메서드 활용
+print(exam.assign(total = exam['math'] + exam['english'] + exam['science']).sort_values('total', ascending=False))
+
+mpg_new = mpg.copy()
+mpg_new = mpg_new.assign(total = mpg_new['cty']+mpg_new['hwy'])
+print(mpg_new)
+mpg_new = mpg_new.assign(mean = mpg_new['total']/2)
+print(mpg_new)
+mpg_new.sort_values('mean',ascending=False).head(3)
+mpg = mpg.assign(total = lambda x : x['cty'] + x['hwy'], mean= lambda x: x['total']/2)\
+    .sort_values('mean',ascending=False)\
+    .head(3)
+print(mpg)
+
