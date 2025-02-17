@@ -11,3 +11,43 @@ fish_weight = [242.0, 290.0, 340.0, 363.0, 430.0, 450.0, 500.0, 390.0, 450.0, 50
                 700.0, 725.0, 720.0, 714.0, 850.0, 1000.0, 920.0, 955.0, 925.0, 975.0, 950.0, 6.7,
                 7.5, 7.0, 9.7, 9.8, 8.7, 10.0, 9.9, 9.8, 12.2, 13.4, 12.2, 19.7, 19.9]
 
+# 두 리스트를 넘파이의 column_stack() 함수를 이용해 하나의 배열로 병합 (길이와 무게 데이터를 합침)
+fish_data = np.column_stack((fish_length, fish_weight))
+fish_target = np.concatenate((np.ones(35), np.zeros(14)))
+
+# 사이킷런으로 훈련세트와 테스트 세트 나누기
+from sklearn.model_selection import train_test_split
+
+train_input, test_input, train_target, test_target = train_test_split(fish_data, fish_target, random_state=42)
+
+print(train_input.shape, test_input.shape) # 데이터의 크기 확인
+print(test_target)
+print(train_target)
+
+# 모델 훈련 : 스케일 차이로 인한 오류 발생
+from sklearn.neighbors import KNeighborsClassifier
+kn = KNeighborsClassifier()
+# kn.fit(train_input, train_target)
+# score = kn.score(test_input, test_target)
+# print(f"모델 학습 결과 : {score:.2f}")
+
+# 표준화 적용 : 표준 편차
+mean = np.mean(train_input, axis = 0) # 평균
+std = np.std(train_input, axis = 0) # 표준 편차
+train_scaled = (train_input - mean) / std
+test_scaled = (test_input -mean) / std
+kn.fit(train_scaled, train_target)
+new_sample = ([25,150] - mean) /std
+print(kn.predict([new_sample]))
+
+
+# 시각화
+# import matplotlib.pyplot as plt
+# plt.scatter(train_input[:,0], train_input[:,1]) # 앞의 매개변수 x축, 뒤의 매개변수 y축
+# plt.scatter(25, 150, marker='^')
+# plt.xlabel('length')
+# plt.ylabel('weight')
+# plt.show()
+
+
+
