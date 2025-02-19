@@ -1,5 +1,4 @@
 # 다중 회귀 (Multiple Linear Regression) : 여러개의 입력 특성(독립 변수)를 사용해 하나의 타깃 값(종속 변수)를 예측
-from statistics import LinearRegression
 
 import pandas as pd
 from sklearn.preprocessing import PolynomialFeatures
@@ -34,3 +33,25 @@ print(lr.score(train_poly, train_target))
 print(lr.score(test_poly, test_target))
 
 # 규제 적용(Regularization)
+# 규제 : 머신 러닝 모델이 훈련 데이터 과도하게 맞춰지는 현상( 과대 적합 ) 을 방지 하기 위해 모델의 복잡도를 줄이는 기법
+# 릿지 규제 : 계수의 제곱합을 사용하여 큰 계수를 억제
+# 랏쏘 규제 : 계수의 절대값 합을 사용
+from sklearn.preprocessing import StandardScaler
+ss = StandardScaler()
+ss.fit(train_poly)
+train_scaled = ss.transform(train_poly)
+test_scaled = ss.transform(test_poly)
+
+# 릿지 회귀
+from sklearn.linear_model import Ridge ,Lasso
+ridge = Ridge(alpha=0.1)
+ridge.fit(train_scaled, train_target)
+print(ridge.score(train_scaled, train_target))
+print(ridge.score(test_scaled, test_target))
+
+# 라쏘 회귀 적용
+lasso = Lasso(alpha=10)
+lasso.fit(train_scaled, train_target)
+print('Lasso Train Score:', lasso.score(train_scaled, train_target))
+print('Lasso Test Score:', lasso.score(test_scaled, test_target))
+print('Lasso zero coefficients:', np.sum(lasso.coef_ == 0))
